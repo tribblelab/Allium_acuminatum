@@ -37,6 +37,7 @@ Allium_data_norm <- Allium_data[-c(1:5,7,10:21,23,25,28:34,36,40:42,45:51,54)]
 # Runs FAMD
 res.famd <- FAMD(na.exclude(Allium_data_norm), ncp = 5, sup.var = NULL, ind.sup = NULL, graph = TRUE)
 
+#Visualizes FAMD
 fviz_pca_ind(res.famd, col.ind = "cos2", 
               gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
               repel = TRUE)
