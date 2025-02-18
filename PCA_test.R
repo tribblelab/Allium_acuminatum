@@ -1,24 +1,18 @@
 library(readr)
 library(tidyverse)
 library(ggplot2)
+library(factoextra)
 
 # Imports Allium data
-Allium_data <- read.csv('/Users/haydenwright/Desktop/R_files/Allium_acuminatum/Allium_data.csv')
-# Creates subset of Allium_data omitting data that will not be analyzed
-Allium_data_norm <- Allium_data[-c(2:5,7,10:22,25,28:34,36,40:42,45:51,54)]
-# makes any negative values positive in the subset to be normalized
-Allium_data_norm[-1] <- abs(Allium_data_norm[-1])
+allium_data <- read.csv('/Users/haydenwright/Desktop/R_files/Allium_acuminatum/Allium_data.csv', row.names = 1)
+# Creates subset of Allium_data with only continuous variables
+allium_data <- allium_data[c(21,23,34,51:52)]
+allium_data <- na.exclude(allium_data)
 
-# Function to min-max normalize data
-normalize <- function(x) {
-  ((x - min(x,na.rm = TRUE)) / (max(x,na.rm = TRUE) - min(x,na.rm = TRUE)))
-}
-
-# Scales all the data in Allium_data_norm
-Allium_data_norm[-1] <- as.data.frame(lapply(Allium_data_norm[-1], normalize))
+scaled.allium_data <- scale(allium_data)
 
 # Runs PCA
-results <- prcomp(na.exclude(Allium_data_norm[-1]), scale. = TRUE)
+results <- prcomp(scaled.allium_data)
 
 # Makes negative eigenvectors postive
 results$rotation <- -1*results$rotation
@@ -29,3 +23,34 @@ biplot(results, scale = 1)
 
 # Calculates percentage of variation explained by each PC
 results$sdev^2 / sum(results$sdev^2)
+
+S <- cov(scaled.allium_data)
+S %>% round(2)
+
+
+S.eigen <- eigen(S)
+
+S.eigen$values %>% round(3) # Eigenvalues
+
+
+S.eigen.prop <- S.eigen$values / sum(S.eigen$values)
+S.eigen.prop %>% round(3) # rounding for display
+
+
+S.eigen$vectors %>% round(2) # 1 vector per eigenvalue
+
+
+loadings <- S.eigen$vectors[ , 1:2] %>%
+  data.frame(row.names = colnames(allium_data)) %>%
+  rename("PC1" = X1, "PC2" = X2) %>%
+  round(digits = 3)
+loadings
+
+
+PC.scores <- scaled.allium_data %*% S.eigen$vectors
+
+cor(PC.scores) %>% round(3)
+
+barplot(S.eigen.prop)
+abline(h = mean(S.eigen.prop),
+       col = "red")
