@@ -7,7 +7,7 @@ library(remotes)
 library(missMDA)
 
 #Imports Allium data, making all categorical variables in 'factor' data type
-Allium_data <- read_csv("Allium_data.csv", na = "NA",
+Allium_data <- read_csv("/Users/haydenwright/Desktop/R_files/Allium_acuminatum/data/Allium_data.csv", na = "NA",
                         col_types = cols(fits_new = col_factor(levels = c("No", "Unsure", "Probably", "Yes")),
                                          outer_tepal_lanceolate_acuminate = col_factor(levels = c("No", "Yes")), 
                                          tepal_spread_spreading = col_factor(levels = c("No", "Some", "Yes")), 
@@ -45,8 +45,11 @@ Allium_data$`bulb-coat_variable` <- factor(Allium_data$`bulb-coat_variable`, lab
 Allium_data$ovary_cresting <- factor(Allium_data$ovary_cresting, labels = c("No16", "Yes16"))
 Allium_data$ovary_long_projections <- factor(Allium_data$ovary_long_projections, labels = c("No17", "Yes17"))
 
+# make longitude values positive
+Allium_data$longitude <- Allium_data$longitude * -1
+
 # Calculates distances from center
-Allium_data$dist_from_center <- sqrt((Allium_data$latitude - 46.67)^2 + (Allium_data$longitude + 120.55)^2)
+Allium_data$dist_from_center <- sqrt((Allium_data$latitude - 46.67)^2 + (Allium_data$longitude - 120.55)^2)
 
 Allium_data$within_radius <- factor(Allium_data$dist_from_center <= 0.85)
 levels(Allium_data$within_radius) <- c("No", "Yes")
