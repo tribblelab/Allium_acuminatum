@@ -48,7 +48,7 @@ Allium_data$ovary_long_projections <- factor(Allium_data$ovary_long_projections,
 # make longitude values positive
 Allium_data$longitude <- Allium_data$longitude * -1
 
-# Calculates distances from center
+# Calculates distances from center of locality of interest
 Allium_data$dist_from_center <- sqrt((Allium_data$latitude - 46.67)^2 + (Allium_data$longitude - 120.55)^2)
 
 Allium_data$within_radius <- factor(Allium_data$dist_from_center <= 0.85)
